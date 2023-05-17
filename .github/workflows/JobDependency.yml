@@ -1,7 +1,7 @@
 # Adding Dependency Job Status as a condition to run the next job
 # This is a basic workflow to help you get started with Actions
 
-name: CI_JobDependency
+name: CIJobDependency
 
 # Controls when the workflow will run
 on:
