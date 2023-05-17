@@ -5,10 +5,10 @@ name: CI
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
-   #push:
-    # branches: [ "main" ]
-   #pull_request:
-     #branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -60,3 +60,41 @@ jobs:
       - uses: actions/checkout@v3
       - name: Run a one-line script
         run: sw_vers
+  job6:
+    runs-on: ubuntu-20.04
+    needs: job3
+    steps: 
+      - uses: actions/checkout@v3
+      - name: Run a one-line script
+        run: cat /etc/os-release && exit 0
+  job7:
+    runs-on: ubuntu-20.04
+    needs: job6
+    if: success()
+    steps: 
+      - uses: actions/checkout@v3
+      - name: Run a one-line script
+        run: cat /etc/os-release
+  job8:
+    runs-on: ubuntu-20.04
+    needs: job6
+    steps: 
+      - uses: actions/checkout@v3
+      - name: Run a one-line script
+        run: cat /etc/os-release
+  job9:
+    runs-on: ubuntu-20.04
+    needs: job8
+    if: ${{ github.ref == 'refs/heads/main' }}
+    steps: 
+      - uses: actions/checkout@v3
+      - name: Run a one-line script
+        run: cat /etc/os-release
+  job10:
+    runs-on: ubuntu-22.04
+    needs: job8
+    if: ${{ github.ref == 'refs/heads/feature' }}
+    steps: 
+      - uses: actions/checkout@v3
+      - name: Run a one-line script
+        run: cat /etc/os-release
