@@ -9,8 +9,8 @@ permissions:
   contents: read
 
 jobs:
-  terraform:
-    name: 'Terraform'
+  aks:
+    name: 'aks'
     runs-on: ubuntu-latest
     environment: production
 
@@ -35,7 +35,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=aks plan -input=false -var name=poonam -var client_id=${{ secrets.ARM_CLIENT_ID }} -var client_secret=${{ secrets.ARM_CLIENT_SECRET }}
+      run: terraform -chdir=aks plan -input=false -var name=poonam -var client_id=${{ secrets.ARM_CLIENT_ID }} -var client_secret=${{ secrets.ARM_CLIENT_SECRET }} -var kubeconfig=${{ github.workspace }}/kubeconfig
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -44,7 +44,49 @@ jobs:
 
     # On push to "main", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
-      run: terraform -chdir=aks apply -auto-approve -input=false -var name=poonam -var client_id=${{ secrets.ARM_CLIENT_ID }} -var client_secret=${{ secrets.ARM_CLIENT_SECRET }}
+      run: terraform -chdir=aks apply -auto-approve -input=false -var name=poonam -var client_id=${{ secrets.ARM_CLIENT_ID }} -var client_secret=${{ secrets.ARM_CLIENT_SECRET }} -var kubeconfig=${{ github.workspace }}/kubeconfig
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+    - name: upload artifacts
+      uses: actions/upload-artifact@v2
+      with: 
+        name: kubeconfig
+        path: ${{ github.workspace }}/kubeconfig
+  kubernetes:
+    name: 'kubernetes'
+    runs-on: ubuntu-latest
+    environment: production
+    needs: aks
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+    - name: Terraform Init
+      run: terraform -chdir=kubernetes init
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+    # On push to "main", build or change infrastructure according to Terraform configuration files
+    - name: download kubeconfig
+      uses: actions/download-artifact@v2
+      with: 
+        name: kubeconfig
+        path: ${{ github.workspace }}
+    - name: Terraform Apply
+      run: terraform -chdir=kubernetes apply -auto-approve -input=false -var name=poonam -var kubeconfig=${{ github.workspace }}/kubeconfig
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
