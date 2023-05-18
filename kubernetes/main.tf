@@ -3,7 +3,7 @@ terraform {
     resource_group_name  = "thinknyxlabs"
     storage_account_name = "thinknyxlabs"
     container_name       = "thinknyxlabs"
-    key                  = "kmayer-kubernetes.terraform.tfstate"
+    key                  = "poonam-kubernetes.terraform.tfstate"
   }
 }
 variable "kubeconfig" {}
