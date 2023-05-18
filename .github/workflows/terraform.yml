@@ -35,7 +35,7 @@ jobs:
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=aks plan -input=false -var name=kul -var client_id=${{ secrets.ARM_CLIENT_ID }} -var client_secret=${{ secrets.ARM_CLIENT_SECRET }}
+      run: terraform -chdir=aks plan -input=false -var name=poonam -var client_id=${{ secrets.ARM_CLIENT_ID }} -var client_secret=${{ secrets.ARM_CLIENT_SECRET }}
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
@@ -44,7 +44,7 @@ jobs:
 
     # On push to "main", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
-      run: terraform -chdir=aks apply -auto-approve -input=false -var name=kul -var client_id=${{ secrets.ARM_CLIENT_ID }} -var client_secret=${{ secrets.ARM_CLIENT_SECRET }}
+      run: terraform -chdir=aks apply -auto-approve -input=false -var name=poonam -var client_id=${{ secrets.ARM_CLIENT_ID }} -var client_secret=${{ secrets.ARM_CLIENT_SECRET }}
       env:
         ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
         ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
