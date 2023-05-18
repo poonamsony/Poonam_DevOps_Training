@@ -25,14 +25,28 @@ jobs:
       uses: actions/checkout@v3
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
-    - name: Terraform -chdir=aks Init
-      run: terraform init
+    - name: Terraform Init
+      run: terraform -chdir=aks init
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
     # Generates an execution plan for Terraform
     - name: Terraform Plan
-      run: terraform -chdir=aks plan -input=false
+      run: terraform -chdir=aks plan -input=false -var name=kul -var client_id=${{ secrets.ARM_CLIENT_ID }} -var client_secret=${{ secrets.ARM_CLIENT_SECRET }}
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
 
-      # On push to "main", build or change infrastructure according to Terraform configuration files
+    # On push to "main", build or change infrastructure according to Terraform configuration files
     - name: Terraform Apply
-      if: github.ref == 'refs/heads/"main"' && github.event_name == 'push'
-      run: terraform -chdir=aks apply -auto-approve -input=false
+      run: terraform -chdir=aks apply -auto-approve -input=false -var name=kul -var client_id=${{ secrets.ARM_CLIENT_ID }} -var client_secret=${{ secrets.ARM_CLIENT_SECRET }}
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
