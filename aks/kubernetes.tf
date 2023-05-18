@@ -8,7 +8,7 @@ data "kubernetes_all_namespaces" "namespaces" {
   ]
 }
 resource "kubernetes_namespace" "thinknyx" {
- depends_on = [local_file.kubeconfig] 
+ depends_on = azurerm_kubernetes_cluster.thinknyx
   metadata {
     name = local.name
   }
