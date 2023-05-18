@@ -14,5 +14,5 @@ locals {
   }
   name = "thinknyx-${var.name}"
 }
-variables "cubeconfig"{
+variable "kubeconfig" {
 }
