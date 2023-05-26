@@ -3,6 +3,6 @@ terraform {
     resource_group_name = "thinknyxlabs"
     storage_account_name = "thinknyxlabs"
     container_name = "thinknyxlabs"
-    key = "poonam.terraform.tfstate"
+    key = "poonam1.terraform.tfstate"
   }
 }
