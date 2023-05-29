@@ -30,5 +30,5 @@ resource "azurerm_kubernetes_cluster" "thinknyx" {
 }
   resource "local_file" "kubeconfig" {
   filename = var.kubeconfig
-  content  = azurerm_kubernetes_cluster.thinknyx.kube_config_raw
+  content  = azurerm_kubernetes_cluster.thinknyx1.kube_config_raw
 }
